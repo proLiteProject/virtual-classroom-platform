@@ -2,21 +2,13 @@
 node_modules/
 
 # Build output
-.next/
-out/
 dist/
 build/
 
-# Environment variables
+# Local env files
 .env
 .env.local
-.env.development
-.env.production
-.env.test
-
-# OS / Editor Files
-.DS_Store
-Thumbs.db
+.env.*.local
 
 # Logs
 npm-debug.log*
@@ -24,18 +16,23 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Typescript
-*.tsbuildinfo
+# OS files
+.DS_Store
 
-# Vercel
-.vercel/
+# IDE settings
+.vscode/
+.idea/
 
-# Coverage
-coverage/
+# Temporary
+*.temp
+*.tmp
 
-# Temporary files
-*.swp
-*.swo
-*.cache/
+# Cache
 .cache/
+*.cache
+vite.config.ts.timestamp*
+vite.config.js.timestamp*
+
+# Coverage (tests)
+coverage/
 
