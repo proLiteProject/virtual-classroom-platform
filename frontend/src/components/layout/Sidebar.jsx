@@ -53,14 +53,24 @@ export const Sidebar = () => {
             label: 'Manage Classes',
           },
           {
-            path: '/admin/reports',
-            icon: 'fas fa-chart-line',
-            label: 'Reports',
+            path: '/admin/student-logs',
+            icon: 'fas fa-user-clock',
+            label: 'Student Logs',
           },
           {
-            path: '/admin/settings',
-            icon: 'fas fa-cog',
-            label: 'Settings',
+            path: '/admin/student-classes',
+            icon: 'fas fa-chalkboard-teacher',
+            label: 'Student Classes',
+          },
+          {
+            path: '/admin/subjetcs',
+            icon: 'fas fa-book',
+            label: 'Subjects',
+          },
+          {
+            path: '/admin/chat-logs',
+            icon: 'fas fa-comments',
+            label: 'Chat Logs',
           },
         ];
 
@@ -547,13 +557,13 @@ export const Sidebar = () => {
               title={isCollapsed ? item.label : ''}
             >
               <i className={item.icon}></i>
-              <span>{item.label}</span>
+              <b>{item.label}</b>
             </NavLink>
           ))}
         </div>
 
         {/* Logout Button */}
-        <div className="sidebar-footer">
+        <div className="sidebar-footer position-absolute bottom-0 w-100">
           <button className="logout-btn" onClick={handleLogout}>
             <i className="fas fa-sign-out-alt"></i>
             <span>Logout</span>
