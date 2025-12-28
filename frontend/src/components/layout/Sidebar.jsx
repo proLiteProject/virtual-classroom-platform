@@ -323,6 +323,7 @@ export const Sidebar = () => {
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
             position: relative;
+            text-decoration: none;
           }
 
           .menu-item:hover {
@@ -496,6 +497,13 @@ export const Sidebar = () => {
               height: 50px !important;
               font-size: 1.5rem !important;
             }
+          }
+
+          .menu-item:hover,
+          .menu-item:focus,
+          .menu-item:visited,
+          .menu-item:active {
+            text-decoration: none;
           }
         `}
       </style>
