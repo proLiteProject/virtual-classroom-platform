@@ -8,6 +8,8 @@ export const AdminLogin = () => {
       role={ROLES.ADMIN}
       title="Admin Login"
       subtitle="Sign in to manage the platform"
+      gradientClass="gradient-bg"
+      iconClass="fas fa-user-shield text-primary"
     />
   );
 };

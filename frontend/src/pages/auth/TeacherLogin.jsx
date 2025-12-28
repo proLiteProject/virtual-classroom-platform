@@ -8,6 +8,8 @@ export const TeacherLogin = () => {
       role={ROLES.TEACHER}
       title="Teacher Login"
       subtitle="Sign in to manage your classrooms"
+      gradientClass="gradient-bg-blue"
+      iconClass="fas fa-chalkboard-teacher text-info"
     />
   );
 };

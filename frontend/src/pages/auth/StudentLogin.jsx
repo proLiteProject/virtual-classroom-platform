@@ -8,6 +8,8 @@ export const StudentLogin = () => {
       role={ROLES.STUDENT}
       title="Student Login"
       subtitle="Sign in to access your classes"
+      gradientClass="gradient-bg-green"
+      iconClass="fas fa-user-graduate text-success"
     />
   );
 };

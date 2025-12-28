@@ -2,11 +2,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Input } from '../common/Input';
-import { Button } from '../common/Button';
 import { ROUTES } from '../../utils/constants';
 
-export const LoginForm = ({ role, title, subtitle }) => {
+export const LoginForm = ({ role, title, subtitle, gradientClass, iconClass }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
   
@@ -22,7 +20,6 @@ export const LoginForm = ({ role, title, subtitle }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -60,14 +57,12 @@ export const LoginForm = ({ role, title, subtitle }) => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        // Check if user role matches the login page
         if (result.user.role !== role) {
           setApiError(`This login is for ${role} only. Your role is ${result.user.role}.`);
           setLoading(false);
           return;
         }
         
-        // Redirect based on role
         switch (result.user.role) {
           case 'ADMIN':
             navigate(ROUTES.ADMIN_DASHBOARD);
@@ -92,68 +87,108 @@ export const LoginForm = ({ role, title, subtitle }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-blue-100 rounded-full mb-4">
-            <svg className="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
-          <p className="text-gray-600 mt-2">{subtitle}</p>
-        </div>
+    <div className={`container-fluid ${gradientClass} vh-100 d-flex align-items-center justify-content-center`}>
+      <div className="row w-100 justify-content-center">
+        <div className="col-md-6 col-lg-4">
+          <div className="card shadow-lg fade-in">
+            <div className="card-body p-5">
+              {/* Header */}
+              <div className="text-center mb-4">
+                <div className="mb-3">
+                  <i className={`${iconClass} fa-4x`}></i>
+                </div>
+                <h2 className="card-title font-weight-bold">{title}</h2>
+                <p className="text-muted">{subtitle}</p>
+              </div>
 
-        {/* Error Alert */}
-        {apiError && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <span>{apiError}</span>
+              {/* Error Alert */}
+              {apiError && (
+                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                  <i className="fas fa-exclamation-triangle mr-2"></i>
+                  {apiError}
+                  <button 
+                    type="button" 
+                    className="close" 
+                    onClick={() => setApiError('')}
+                  >
+                    <span>&times;</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Form */}
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="email">
+                    <i className="fas fa-envelope mr-2"></i>
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email"
+                    autoComplete="email"
+                  />
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email}</div>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="password">
+                    <i className="fas fa-lock mr-2"></i>
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                  />
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password}</div>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-block btn-lg mt-4"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm mr-2" role="status"></span>
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-sign-in-alt mr-2"></i>
+                      Sign In
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Footer */}
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => navigate(ROUTES.CHOOSE_ROLE)}
+                  className="btn btn-link text-muted"
+                >
+                  <i className="fas fa-arrow-left mr-2"></i>
+                  Back to role selection
+                </button>
+              </div>
             </div>
           </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <Input
-            label="Email Address"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            error={errors.email}
-            autoComplete="email"
-          />
-
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            error={errors.password}
-            autoComplete="current-password"
-          />
-
-          <Button type="submit" loading={loading}>
-            Sign In
-          </Button>
-        </form>
-
-        {/* Footer */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => navigate(ROUTES.CHOOSE_ROLE)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            ← Back to role selection
-          </button>
         </div>
       </div>
     </div>

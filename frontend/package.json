@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "axios": "^1.13.2",
+    "bootstrap": "^4.6.2",
+    "jquery": "^3.6.4",
+    "popper.js": "^1.16.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^6.30.2"
