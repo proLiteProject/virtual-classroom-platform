@@ -1,0 +1,27 @@
+-- Add teacher_id to classes table if not exists
+ALTER TABLE classes 
+ADD COLUMN teacher_id INT,
+ADD FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE SET NULL;
+
+-- Create enrollments table for students
+CREATE TABLE IF NOT EXISTS enrollments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  class_id INT NOT NULL,
+  enrolled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_enrollment (student_id, class_id)
+);
+
+-- Optional: Create refresh_tokens table
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  token TEXT NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_user_id (user_id),
+  INDEX idx_expires_at (expires_at)
+);
