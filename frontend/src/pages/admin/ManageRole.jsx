@@ -21,6 +21,14 @@ export const ManageRole = () => {
       setLoading(false);
     }
   };
+  
+  let editTrigger = async (user) => {
+    console.log(user);
+  };
+
+  let deleteTriggger = async (user) => {
+    console.log(user);
+  };
 
   const adminUsers = users.filter(u => u.role === 'ADMIN');
   const teacherUsers = users.filter(u => u.role === 'TEACHER');
@@ -216,6 +224,7 @@ export const ManageRole = () => {
                     <th><i className="fas fa-envelope mr-2"></i>Email</th>
                     <th><i className="fas fa-graduation-cap mr-2"></i>Qualification</th>
                     <th><i className="fas fa-calendar mr-2"></i>Joined</th>
+                    <th><i className="fas fa-eye mr-2"></i>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -225,6 +234,10 @@ export const ManageRole = () => {
                       <td className="user-email">{user.email}</td>
                       <td><span className="badge-qualification">{user.qualification}</span></td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
+                        <button onClick={() => deleteTriggger(user)} className='btn btn-outline-danger btn-sm ml-2'><i className="fas fa-trash"></i></button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -254,6 +267,7 @@ export const ManageRole = () => {
                     <th><i className="fas fa-envelope mr-2"></i>Email</th>
                     <th><i className="fas fa-graduation-cap mr-2"></i>Qualification</th>
                     <th><i className="fas fa-calendar mr-2"></i>Joined</th>
+                    <th><i className="fas fa-eye mr-2"></i>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -263,6 +277,10 @@ export const ManageRole = () => {
                       <td className="user-email">{user.email}</td>
                       <td><span className="badge-qualification">{user.qualification}</span></td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
+                        <button onClick={() => deleteTriggger(user)} className='btn btn-outline-danger btn-sm ml-2'><i className="fas fa-trash"></i></button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -293,6 +311,7 @@ export const ManageRole = () => {
                     <th><i className="fas fa-envelope mr-2"></i>Email</th>
                     <th><i className="fas fa-phone mr-2"></i>Phone</th>
                     <th><i className="fas fa-calendar mr-2"></i>Joined</th>
+                    <th><i className="fas fa-eye mr-2"></i>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -303,6 +322,10 @@ export const ManageRole = () => {
                       <td className="user-email">{user.email}</td>
                       <td>{user.phone}</td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
+                        <button onClick={() => deleteTriggger(user)} className='btn btn-outline-danger btn-sm ml-2'><i className="fas fa-trash"></i></button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
