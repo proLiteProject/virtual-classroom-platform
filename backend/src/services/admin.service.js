@@ -19,3 +19,24 @@ export const getCountForTable = async (className, teacherId) => {
     studentCount : studentCount[0].student_count
   };
 };
+
+export const manageRoleDataFetchService = async () => {
+  const [userData] = await pool.query(
+    `SELECT
+        *
+      FROM
+        users u
+      LEFT JOIN teachers t 
+          ON
+        t.user_id = u.id
+        AND u.role IN ('ADMIN', 'TEACHER')
+      LEFT JOIN students s 
+          ON
+        s.user_id = u.id
+        AND u.role = 'STUDENT';`
+  );
+
+  return {
+    userData : userData
+  };
+};

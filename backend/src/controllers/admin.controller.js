@@ -1,4 +1,4 @@
-import { getCountForTable } from "../services/admin.service.js";
+import { getCountForTable, manageRoleDataFetchService } from "../services/admin.service.js";
 
 export const countForTableController = async (req, res, next) => {
   try {
@@ -14,3 +14,18 @@ export const countForTableController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const manageRoleDataFetchController = async (req, res, next) => {
+  try{
+    const result = await manageRoleDataFetchService();
+
+    res.json({
+      success: true,
+      message: "user data obtained",
+      data: result
+    });
+  }catch(error){
+    next(error);
+  }
+
+}

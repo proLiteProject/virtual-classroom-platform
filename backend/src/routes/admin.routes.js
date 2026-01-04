@@ -3,7 +3,7 @@ import express from 'express';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import { authorize } from '../middlewares/role.middleware.js';
 import { ROLES } from '../config/roles.js';
-import { countForTableController } from '../controllers/admin.controller.js';
+import { countForTableController, manageRoleDataFetchController } from '../controllers/admin.controller.js';
 
 const router = express.Router();
 
@@ -21,5 +21,7 @@ router.delete('/users/:id', (req, res) => {
 });
 
 router.get('/table-data-count',countForTableController);
+
+router.get('/manage-role',manageRoleDataFetchController);
 
 export default router;
