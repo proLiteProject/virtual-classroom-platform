@@ -1,208 +1,356 @@
 // src/pages/admin/AdminDashboard.jsx
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../utils/constants';
+import api from '../../services/api';
+import { useState, useEffect } from 'react';
+import { Layout } from '../../components/layout/Layout';
 
 export const AdminDashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [stats, setStats] = useState({
+    teacherCount: 0,
+    studentCount: 0,
+    classCount: 0,
+  });
 
-  const handleLogout = () => {
-    logout();
-    navigate(ROUTES.CHOOSE_ROLE);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/admin/table-data-count');
+
+      if (response.data.success) {
+        setStats(response.data.data);
+      }
+    } catch (err) {
+      setError('Failed to fetch statistics');
+      console.error('Error fetching stats:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-    <style>
+    <Layout>
+      <style>
         {`
-          .admin-navbar {
-            background-color: #ffffff;
-            margin: 16px;
-            padding: 14px 20px;
-            border-radius: 14px;
-            box-shadow:
-              0 8px 20px rgba(0, 0, 0, 0.12),
-              0 2px 6px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease-in-out;
+          .dashboard-header {
+            margin-bottom: 30px;
           }
 
-          .admin-navbar:hover {
-            box-shadow:
-              0 12px 28px rgba(0, 0, 0, 0.16),
-              0 4px 10px rgba(0, 0, 0, 0.1);
+          .dashboard-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
           }
 
-          .admin-navbar .navbar-brand i,
-          .admin-navbar .welcome i {
-            color: #0d6efd;
+          .dashboard-subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
           }
 
-          .logout-btn {
-            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
-          }
-          .shadow-custom {
+          .stat-card {
             border-radius: 16px;
             border: none;
-            background-color: #ffffff;
-
-            /* Bulged shadow */
-            box-shadow:
-              0 10px 26px rgba(0, 0, 0, 0.12),
-              0 4px 10px rgba(0, 0, 0, 0.08);
-
             transition: all 0.3s ease;
+            height: 100%;
+            margin-bottom: 20px;
           }
 
-          .shadow-custom:hover {
-            transform: translateY(-4px);
-            box-shadow:
-              0 16px 36px rgba(0, 0, 0, 0.16),
-              0 6px 14px rgba(0, 0, 0, 0.12);
+          .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
           }
 
-          .shadow-custom .card-header {
-            border-bottom: 1px solid #f0f0f0;
+          .stat-card .card-body {
+            padding: 25px;
+          }
+
+          .stat-icon {
+            opacity: 0.3;
+          }
+
+          .info-card {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          }
+
+          .info-card .card-header {
+            background: white;
+            border-bottom: 2px solid #f0f0f0;
             border-radius: 16px 16px 0 0;
-            font-weight: 600;
+            padding: 20px 25px;
           }
 
-          .shadow-custom .badge-primary {
-            font-size: 0.85rem;
-            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.35);
+          .info-card .card-body {
+            padding: 25px;
           }
 
-          .shadow-custom table th {
-            color: #6c757d;
+          .info-table th {
+            color: #7f8c8d;
             font-weight: 600;
+            padding: 12px 0;
+            width: 150px;
+          }
+
+          .info-table td {
+            color: #2c3e50;
+            padding: 12px 0;
+          }
+
+          .role-badge {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(4, 123, 251, 0.3);
+          }
+
+          /* Mobile Responsive Styles */
+          @media (max-width: 768px) {
+            .dashboard-title {
+              font-size: 1.5rem;
+            }
+
+            .dashboard-title i {
+              font-size: 1.3rem;
+            }
+
+            .dashboard-subtitle {
+              font-size: 0.9rem;
+            }
+
+            .stat-card {
+              margin-bottom: 15px;
+            }
+
+            .stat-card .card-body {
+              padding: 20px;
+            }
+
+            .stat-card h2 {
+              font-size: 2rem;
+            }
+
+            .stat-card h6 {
+              font-size: 0.85rem;
+            }
+
+            .stat-icon {
+              font-size: 2rem !important;
+            }
+
+            .info-card .card-header {
+              padding: 15px 20px;
+            }
+
+            .info-card .card-header h5 {
+              font-size: 1rem;
+            }
+
+            .info-card .card-body {
+              padding: 20px;
+            }
+
+            .info-table {
+              font-size: 0.9rem;
+            }
+
+            .info-table th {
+              width: 100px;
+              padding: 10px 0;
+            }
+
+            .info-table td {
+              padding: 10px 0;
+              word-break: break-word;
+            }
+
+            .role-badge {
+              font-size: 0.8rem;
+              padding: 6px 12px;
+            }
+          }
+
+          /* Small phones */
+          @media (max-width: 480px) {
+            .dashboard-header {
+              margin-bottom: 20px;
+            }
+
+            .dashboard-title {
+              font-size: 1.3rem;
+            }
+
+            .stat-card h2 {
+              font-size: 1.8rem;
+            }
+
+            .stat-card h6 {
+              font-size: 0.8rem;
+            }
+
+            .stat-card .card-body {
+              padding: 15px;
+            }
+
+            .info-table {
+              font-size: 0.85rem;
+            }
+
+            .info-table th {
+              width: 80px;
+            }
+          }
+
+          /* Tablet */
+          @media (min-width: 769px) and (max-width: 1024px) {
+            .dashboard-title {
+              font-size: 1.8rem;
+            }
+
+            .stat-card .card-body {
+              padding: 22px;
+            }
           }
         `}
       </style>
 
-    <div className="min-vh-100" style={{backgroundColor: '#f8f9fa'}}>
-      {/* Navbar */}
-      <nav className="navbar admin-navbar">
-        <div className="container-fluid">
-          <span className="navbar-brand font-weight-bold">
-            <i className="fas fa-user-shield mr-2"></i>
-            Admin Panel
-          </span>
-
-          <div className="ml-auto d-flex align-items-center">
-            <span className="welcome text-dark mr-3">
-              <i className="fas fa-user-circle mr-2"></i>
-              Welcome, {user?.name}
-            </span>
-
-            <button
-              onClick={handleLogout}
-              className="btn btn-danger btn-sm logout-btn"
-            >
-              <i className="fas fa-sign-out-alt mr-2"></i>
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Content */}
-      <div className="container-fluid py-5">
-        <div className="row">
-          <div className="col-12">
-            <h2 className="mb-4">
-              <i className="fas fa-tachometer-alt mr-2 text-primary"></i>
-              Admin Dashboard
-            </h2>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="row mb-4">
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover text-white" style={{backgroundColor:'#047BFB'}}>
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <b className="text-white-100 mb-2">Total Users</b>
-                    <h2 className="mb-0 font-weight-bold"></h2>
-                  </div>
-                  <i className="fas fa-users fa-3x opacity-50"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover text-white" style={{backgroundColor:'#58C1C2'}}>
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <b className="text-white-100 mb-2">Total Classrooms</b>
-                    <h2 className="mb-0 font-weight-bold"></h2>
-                  </div>
-                  <i className="fas fa-chalkboard fa-3x opacity-50"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover text-white" style={{backgroundColor:'#989EFD'}}>
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <b className="text-white-100 mb-2">Active Teachers</b>
-                    <h2 className="mb-0 font-weight-bold"></h2>
-                  </div>
-                  <i className="fas fa-chalkboard-teacher fa-3x opacity-50"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* User Info */}
-        <div className="row">
-          <div className="col-12">
-            <div className="card shadow-custom">
-              <div className="card-header bg-white">
-                <h5 className="mb-0">
-                  <i className="fas fa-info-circle mr-2 text-primary"></i>
-                  User Information
-                </h5>
-              </div>
-
-              <div className="card-body" style={{overflow : 'auto'}}>
-                <table className="table table-borderless mb-0">
-                  <tbody>
-                    {/* <tr>
-                      <th style={{ width: '150px' }}>ID:</th>
-                      <td>{user?.id}</td>
-                    </tr> */}
-                    <tr>
-                      <th>Email:</th>
-                      <td>{user?.email}</td>
-                    </tr>
-                    <tr>
-                      <th>Name:</th>
-                      <td>{user?.name}</td>
-                    </tr>
-                    <tr>
-                      <th>Role:</th>
-                      <td>
-                        <span className="badge badge-primary badge-pill px-3 py-2">
-                          {user?.role}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Header */}
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">
+          <i className="fas fa-tachometer-alt mr-2 mr-md-3" style={{ color: '#047BFB' }}></i>
+          Admin Dashboard
+        </h1>
+        <p className="dashboard-subtitle">
+          Welcome back, {user?.name}! Here's what's happening today.
+        </p>
       </div>
-    </div>
-    </>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="alert alert-danger alert-dismissible fade show mb-4">
+          <i className="fas fa-exclamation-triangle mr-2"></i>
+          {error}
+          <button
+            type="button"
+            className="close"
+            onClick={() => setError('')}
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }}>
+            <span className="sr-only">Loading...</span>
+          </div>
+          <p className="mt-3 text-muted">Loading statistics...</p>
+        </div>
+      ) : (
+        <>
+          {/* Stats Cards */}
+          <div className="row">
+            <div className="col-12 col-md-6 col-lg-4 mt-2">
+              <div className="stat-card card text-white" style={{ backgroundColor: '#047BFB' }}>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-2" style={{ opacity: 0.9 }}>Total Classrooms</h6>
+                      <h2 className="mb-0 font-weight-bold">{stats.classCount}</h2>
+                    </div>
+                    <i className="fas fa-chalkboard fa-3x stat-icon"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12 col-md-6 col-lg-4 mt-2">
+              <div className="stat-card card text-white" style={{ backgroundColor: '#58C1C2' }}>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-2" style={{ opacity: 0.9 }}>Total Teachers</h6>
+                      <h2 className="mb-0 font-weight-bold">{stats.teacherCount}</h2>
+                    </div>
+                    <i className="fas fa-chalkboard-teacher fa-3x stat-icon"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12 col-md-6 col-lg-4 mt-2">
+              <div className="stat-card card text-white" style={{ backgroundColor: '#989EFD' }}>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-2" style={{ opacity: 0.9 }}>Total Students</h6>
+                      <h2 className="mb-0 font-weight-bold">{stats.studentCount}</h2>
+                    </div>
+                    <i className="fas fa-user-graduate fa-3x stat-icon"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* User Info Card */}
+          <div className="row mt-4">
+            <div className="col-12">
+              <div className="card info-card">
+                <div className="card-header">
+                  <h5 className="mb-0">
+                    <i className="fas fa-user-circle mr-2" style={{ color: '#047BFB' }}></i>
+                    Account Information
+                  </h5>
+                </div>
+                <div className="card-body">
+                  <table className="table table-borderless info-table mb-0">
+                    <tbody>
+                      <tr>
+                        <th>
+                          <i className="fas fa-envelope mr-2"></i>
+                          Email
+                        </th>
+                        <td>{user?.email}</td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <i className="fas fa-user mr-2"></i>
+                          Name
+                        </th>
+                        <td>{user?.name}</td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <i className="fas fa-id-badge mr-2"></i>
+                          Role
+                        </th>
+                        <td>
+                          <span className="badge badge-primary role-badge">
+                            <i className="fas fa-shield-alt mr-2"></i>
+                            {user?.role}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </Layout>
   );
 };

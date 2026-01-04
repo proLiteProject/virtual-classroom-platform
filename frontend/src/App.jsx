@@ -9,6 +9,12 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard';
 import { StudentDashboard } from './pages/student/StudentDashboard';
 import { ROUTES, ROLES } from './utils/constants';
+import { ManageRole } from './pages/admin/ManageRole';
+import { ManageClasses } from './pages/admin/ManageClasses';
+import { StudentLog } from './pages/admin/StudentLog';
+import { StudentClassManagement } from './pages/admin/StudentClassManagement';
+import { SubjectManagement } from './pages/admin/SubjectManagement';
+import { ChatLog } from './pages/admin/ChatLog';
 
 function App() {
   return (
@@ -47,7 +53,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-
+          <Route path='admin/users' element={<ManageRole />} />
+          <Route path='admin/classes' element={<ManageClasses />} />
+          <Route path='admin/student-logs' element={<StudentLog />} />
+          <Route path='admin/student-classes' element={< StudentClassManagement/>} />
+          <Route path='admin/subjetcs' element={< SubjectManagement/>} />
+          <Route path='admin/chat-logs' element={< ChatLog/>} />
           {/* 404 */}
           <Route path="*" element={<Navigate to={ROUTES.CHOOSE_ROLE} replace />} />
         </Routes>

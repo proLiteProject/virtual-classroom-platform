@@ -3,6 +3,7 @@ import express from 'express';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import { authorize } from '../middlewares/role.middleware.js';
 import { ROLES } from '../config/roles.js';
+import { countForTableController, manageRoleDataFetchController } from '../controllers/admin.controller.js';
 
 const router = express.Router();
 
@@ -18,5 +19,9 @@ router.get('/users', (req, res) => {
 router.delete('/users/:id', (req, res) => {
   res.json({ message: 'Delete user - Admin only' });
 });
+
+router.get('/table-data-count',countForTableController);
+
+router.get('/manage-role',manageRoleDataFetchController);
 
 export default router;
