@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/layout/Layout';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 
 export const AdminDashboard = () => {
   const { user } = useAuth();
@@ -251,12 +252,7 @@ export const AdminDashboard = () => {
 
       {/* Loading State */}
       {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }}>
-            <span className="sr-only">Loading...</span>
-          </div>
-          <p className="mt-3 text-muted">Loading statistics...</p>
-        </div>
+        <LoadingScreen label="Loading statistics..." />
       ) : (
         <>
           {/* Stats Cards */}

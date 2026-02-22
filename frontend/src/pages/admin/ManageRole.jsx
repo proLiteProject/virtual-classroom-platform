@@ -3,6 +3,7 @@ import { Layout } from '../../components/layout/Layout'
 import api from '../../services/api'
 import { SlideModal } from '../../components/common/SlideModal'
 import { ConfirmDialog } from '../../components/common/ConfirmDialog'
+import { LoadingScreen } from '../../components/common/LoadingScreen'
 
 export const ManageRole = () => {
   const [users, setUsers] = useState([]);
@@ -31,7 +32,7 @@ export const ManageRole = () => {
     }
   };
   
-  const userKey = (user) => user?._id ?? user?.id ?? user?.user_id ?? user?.email;
+  const userKey = (user) => user?.user_id ?? user?._id ?? user?.id ?? user?.email;
 
   let editTrigger = async (user) => {
     setActiveUser(user);
@@ -61,11 +62,12 @@ export const ManageRole = () => {
     if (!activeUser) return;
     setSaving(true);
     try {
-      setUsers((prev) =>
-        prev.map((u) =>
-          userKey(u) === userKey(activeUser) ? { ...u, role: editRole } : u
-        )
-      );
+      const userId = userKey(activeUser);
+      await api.put('/admin/update-user', {
+        userId,
+        role: editRole,
+      });
+      await fetchUsers();
       handleCloseEdit();
     } catch (error) {
       console.error('Error:', error);
@@ -78,7 +80,9 @@ export const ManageRole = () => {
     if (!activeUser) return;
     setDeleting(true);
     try {
-      setUsers((prev) => prev.filter((u) => userKey(u) !== userKey(activeUser)));
+      const userId = userKey(activeUser);
+      await api.delete(`/admin/delete-user/${userId}`);
+      await fetchUsers();
       handleCloseDelete();
     } catch (error) {
       console.error('Error:', error);
@@ -227,13 +231,6 @@ export const ManageRole = () => {
             font-weight: 500;
           }
 
-          .loading-spinner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 400px;
-          }
-
           .empty-state {
             text-align: center;
             padding: 40px;
@@ -285,11 +282,7 @@ export const ManageRole = () => {
       </style>
 
       {loading ? (
-        <div className="loading-spinner">
-          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }}>
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
+        <LoadingScreen label="Fetching users..." />
       ) : (
         <>
           {/* ADMIN Section */}
@@ -317,7 +310,7 @@ export const ManageRole = () => {
                     <tr key={index}>
                       <td className="user-name1">{user.name}</td>
                       <td className="user-email">{user.email}</td>
-                      <td><span className="badge-qualification">{user.qualification}</span></td>
+                      <td><span className="badge-qualification">{user.qualification || '-'}</span></td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
                       <td>
                         <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
@@ -360,7 +353,7 @@ export const ManageRole = () => {
                     <tr key={index}>
                       <td className="user-name1">{user.name}</td>
                       <td className="user-email">{user.email}</td>
-                      <td><span className="badge-qualification">{user.qualification}</span></td>
+                      <td><span className="badge-qualification">{user.qualification || '-'}</span></td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
                       <td>
                         <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
@@ -405,7 +398,7 @@ export const ManageRole = () => {
                       <td><strong>{user.roll_no}</strong></td>
                       <td className="user-name1">{user.name}</td>
                       <td className="user-email">{user.email}</td>
-                      <td>{user.phone}</td>
+                      <td>{user.student_phone || user.phone || '-'}</td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
                       <td>
                         <button onClick={() => editTrigger(user)} className='btn btn-outline-success btn-sm'><i className="fas fa-pencil"></i></button>
