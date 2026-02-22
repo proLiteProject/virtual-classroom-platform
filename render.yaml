@@ -10,3 +10,11 @@ services:
         value: 20.11.1
       - key: NODE_ENV
         value: production
+  - type: static
+    name: virtual-classroom-frontend
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
