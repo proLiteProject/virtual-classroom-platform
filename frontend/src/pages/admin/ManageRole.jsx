@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Layout } from '../../components/layout/Layout'
 import api from '../../services/api'
+import { SlideModal } from '../../components/common/SlideModal'
+import { ConfirmDialog } from '../../components/common/ConfirmDialog'
 
 export const ManageRole = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [activeUser, setActiveUser] = useState(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [editRole, setEditRole] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -22,13 +31,72 @@ export const ManageRole = () => {
     }
   };
   
+  const userKey = (user) => user?._id ?? user?.id ?? user?.user_id ?? user?.email;
+
   let editTrigger = async (user) => {
-    console.log(user);
+    setActiveUser(user);
+    setEditRole(user?.role || '');
+    setIsEditOpen(true);
   };
 
   let deleteTriggger = async (user) => {
-    console.log(user);
+    setActiveUser(user);
+    setIsDeleteOpen(true);
   };
+
+  const handleCloseEdit = () => {
+    if (saving) return;
+    setIsEditOpen(false);
+    setActiveUser(null);
+    setEditRole('');
+  };
+
+  const handleCloseDelete = () => {
+    if (deleting) return;
+    setIsDeleteOpen(false);
+    setActiveUser(null);
+  };
+
+  const handleSaveRole = async () => {
+    if (!activeUser) return;
+    setSaving(true);
+    try {
+      setUsers((prev) =>
+        prev.map((u) =>
+          userKey(u) === userKey(activeUser) ? { ...u, role: editRole } : u
+        )
+      );
+      handleCloseEdit();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!activeUser) return;
+    setDeleting(true);
+    try {
+      setUsers((prev) => prev.filter((u) => userKey(u) !== userKey(activeUser)));
+      handleCloseDelete();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const editFooter = (
+    <>
+      <button className="btn btn-outline-secondary btn-sm" onClick={handleCloseEdit} disabled={saving}>
+        Cancel
+      </button>
+      <button className="btn btn-success btn-sm" onClick={handleSaveRole} disabled={saving || !editRole}>
+        {saving ? 'Saving...' : 'Save Changes'}
+      </button>
+    </>
+  );
 
   const adminUsers = users.filter(u => u.role === 'ADMIN');
   const teacherUsers = users.filter(u => u.role === 'TEACHER');
@@ -176,6 +244,23 @@ export const ManageRole = () => {
             font-size: 3rem;
             opacity: 0.3;
             margin-bottom: 15px;
+          }
+
+          .edit-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+          }
+
+          .edit-label {
+            font-weight: 600;
+            color: #2c3e50;
+          }
+
+          .edit-muted {
+            color: #6c757d;
+            font-size: 0.9rem;
           }
 
           @media (max-width: 768px) {
@@ -339,6 +424,53 @@ export const ManageRole = () => {
           </div>
         </>
       )}
+
+      <SlideModal
+        open={isEditOpen}
+        onClose={handleCloseEdit}
+        title="Edit User Role"
+        width={520}
+        footer={editFooter}
+      >
+        {activeUser && (
+          <>
+            <div className="edit-field">
+              <div className="edit-label">User</div>
+              <div className="user-name1">{activeUser.name}</div>
+              <div className="edit-muted">{activeUser.email}</div>
+            </div>
+
+            <div className="edit-field">
+              <label className="edit-label" htmlFor="roleSelect">Role</label>
+              <select
+                id="roleSelect"
+                className="form-control"
+                value={editRole}
+                onChange={(e) => setEditRole(e.target.value)}
+              >
+                <option value="ADMIN">Admin</option>
+                <option value="TEACHER">Teacher</option>
+                <option value="STUDENT">Student</option>
+              </select>
+            </div>
+          </>
+        )}
+      </SlideModal>
+
+      <ConfirmDialog
+        open={isDeleteOpen}
+        title="Delete User"
+        message={
+          activeUser
+            ? `Are you sure you want to delete ${activeUser.name} (${activeUser.email})? This action cannot be undone.`
+            : 'Are you sure you want to delete this user?'
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onCancel={handleCloseDelete}
+        onConfirm={handleConfirmDelete}
+        loading={deleting}
+      />
     </Layout>
   )
 }
