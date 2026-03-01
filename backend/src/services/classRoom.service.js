@@ -4,8 +4,8 @@ import { ApiError } from "../utils/ApiError.js";
 
 export const createClassRoomService = async (className, teacherId) => {
   const [result] = await pool.query(
-    `INSERT INTO classes (class_name, teacher_id, created_at, updated_at)
-     VALUES (?, ?, NOW(), NOW())`,
+    `INSERT INTO classes (class_name, teacher_id, created_at)
+     VALUES (?, ?, NOW())`,
     [className, teacherId]
   );
 
@@ -64,7 +64,7 @@ export const updateClassRoomService = async (classId, className, userId, userRol
   }
 
   const [result] = await pool.query(
-    'UPDATE classes SET class_name = ?, updated_at = NOW() WHERE id = ?',
+    'UPDATE classes SET class_name = ? WHERE id = ?',
     [className, classId]
   );
 

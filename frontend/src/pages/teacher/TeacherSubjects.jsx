@@ -5,7 +5,7 @@ import { LoadingScreen } from '../../components/common/LoadingScreen'
 import { SlideModal } from '../../components/common/SlideModal'
 import { ConfirmDialog } from '../../components/common/ConfirmDialog'
 
-export const SubjectManagement = () => {
+export const TeacherSubjects = () => {
   const [subjects, setSubjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -133,10 +133,10 @@ export const SubjectManagement = () => {
         <>
           <div className="page-header">
             <div className="page-title">
-              <i className="fas fa-book mr-2" style={{ color: '#047BFB' }}></i>
-              Subject Management
+              <i className="fas fa-book mr-2 text-info"></i>
+              Subjects
             </div>
-            <button className="btn btn-primary btn-sm" onClick={openCreate}>
+            <button className="btn btn-info btn-sm" onClick={openCreate}>
               <i className="fas fa-plus mr-2"></i>
               New Subject
             </button>
@@ -184,7 +184,7 @@ export const SubjectManagement = () => {
             <button className="btn btn-outline-secondary btn-sm" onClick={closeCreate} disabled={saving}>
               Cancel
             </button>
-            <button className="btn btn-primary btn-sm" onClick={handleCreate} disabled={saving || !subjectName.trim()}>
+            <button className="btn btn-info btn-sm" onClick={handleCreate} disabled={saving || !subjectName.trim()}>
               {saving ? 'Saving...' : 'Create'}
             </button>
           </>

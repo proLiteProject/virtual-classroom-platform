@@ -63,7 +63,7 @@ export const Sidebar = () => {
             label: 'Student Classes',
           },
           {
-            path: '/admin/subjetcs',
+            path: '/admin/subjects',
             icon: 'fas fa-book',
             label: 'Subjects',
           },
@@ -85,6 +85,11 @@ export const Sidebar = () => {
             path: '/teacher/classes',
             icon: 'fas fa-chalkboard',
             label: 'My Classes',
+          },
+          {
+            path: '/teacher/subjects',
+            icon: 'fas fa-book',
+            label: 'Subjects',
           },
           {
             path: '/teacher/assignments',

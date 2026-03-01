@@ -1,135 +1,142 @@
 // src/pages/teacher/TeacherDashboard.jsx
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../utils/constants';
+import { useEffect, useState } from 'react';
+import { Layout } from '../../components/layout/Layout';
+import api from '../../services/api';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 
 export const TeacherDashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    logout();
-    navigate(ROUTES.CHOOSE_ROLE);
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const fetchClasses = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/classrooms');
+      setClasses(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching classrooms:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-vh-100" style={{backgroundColor: '#f8f9fa'}}>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-info shadow-sm">
-        <div className="container-fluid">
-          <a className="navbar-brand font-weight-bold" href="#">
-            <i className="fas fa-chalkboard-teacher mr-2"></i>
-            Teacher Portal
-          </a>
-          <div className="ml-auto d-flex align-items-center">
-            <span className="text-white mr-3">
-              <i className="fas fa-user-circle mr-2"></i>
-              Welcome, {user?.name}
-            </span>
-            <button onClick={handleLogout} className="btn btn-danger">
-              <i className="fas fa-sign-out-alt mr-2"></i>
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+    <Layout>
+      <style>
+        {`
+          .teacher-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+          }
 
-      {/* Content */}
-      <div className="container-fluid py-5">
-        <div className="row">
-          <div className="col-12">
-            <h2 className="mb-4">
-              <i className="fas fa-tachometer-alt mr-2 text-info"></i>
+          .stat-card {
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+          }
+
+          .stat-card .card-body {
+            padding: 20px;
+          }
+
+          .stat-card .stat-icon {
+            opacity: 0.5;
+          }
+        `}
+      </style>
+
+      {loading ? (
+        <LoadingScreen label="Loading teacher dashboard..." />
+      ) : (
+        <>
+          <div className="mb-4">
+            <div className="teacher-title">
+              <i className="fas fa-chalkboard-teacher mr-2 text-info"></i>
               Teacher Dashboard
-            </h2>
+            </div>
+            <div className="text-muted">Welcome back, {user?.name}</div>
           </div>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="row mb-4">
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover bg-info text-white">
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
+          <div className="row mb-4">
+            <div className="col-12 col-md-4 mb-3">
+              <div className="card stat-card" style={{ backgroundColor: '#58C1C2' }}>
+                <div className="card-body d-flex justify-content-between align-items-center">
                   <div>
-                    <h6 className="text-white-50 mb-2">My Classrooms</h6>
-                    <h2 className="mb-0 font-weight-bold">5</h2>
+                    <div className="text-white-50">My Classes</div>
+                    <div className="h2 mb-0">{classes.length}</div>
                   </div>
-                  <i className="fas fa-chalkboard fa-3x opacity-50"></i>
+                  <i className="fas fa-chalkboard fa-3x stat-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-md-4 mb-3">
+              <div className="card stat-card" style={{ backgroundColor: '#989EFD' }}>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <div className="text-white-50">Assignments</div>
+                    <div className="h2 mb-0">0</div>
+                  </div>
+                  <i className="fas fa-tasks fa-3x stat-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-md-4 mb-3">
+              <div className="card stat-card" style={{ backgroundColor: '#047BFB' }}>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <div className="text-white-50">Students</div>
+                    <div className="h2 mb-0">0</div>
+                  </div>
+                  <i className="fas fa-user-graduate fa-3x stat-icon"></i>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover bg-success text-white">
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 className="text-white-50 mb-2">Total Students</h6>
-                    <h2 className="mb-0 font-weight-bold">120</h2>
-                  </div>
-                  <i className="fas fa-user-graduate fa-3x opacity-50"></i>
-                </div>
-              </div>
+          <div className="card">
+            <div className="card-header bg-white">
+              <h5 className="mb-0">
+                <i className="fas fa-info-circle mr-2 text-info"></i>
+                Account Information
+              </h5>
+            </div>
+            <div className="card-body">
+              <table className="table table-borderless mb-0">
+                <tbody>
+                  <tr>
+                    <th style={{ width: '140px' }}>ID</th>
+                    <td>{user?.id}</td>
+                  </tr>
+                  <tr>
+                    <th>Name</th>
+                    <td>{user?.name}</td>
+                  </tr>
+                  <tr>
+                    <th>Email</th>
+                    <td>{user?.email}</td>
+                  </tr>
+                  <tr>
+                    <th>Role</th>
+                    <td>
+                      <span className="badge badge-info badge-pill px-3 py-2">
+                        {user?.role}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-
-          <div className="col-md-4 mb-3">
-            <div className="card card-hover bg-warning text-white">
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 className="text-white-50 mb-2">Assignments</h6>
-                    <h2 className="mb-0 font-weight-bold">15</h2>
-                  </div>
-                  <i className="fas fa-tasks fa-3x opacity-50"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* User Info */}
-        <div className="row">
-          <div className="col-12">
-            <div className="card shadow-custom">
-              <div className="card-header bg-white">
-                <h5 className="mb-0">
-                  <i className="fas fa-info-circle mr-2 text-info"></i>
-                  User Information
-                </h5>
-              </div>
-              <div className="card-body">
-                <table className="table table-borderless">
-                  <tbody>
-                    <tr>
-                      <th style={{width: '150px'}}>ID:</th>
-                      <td>{user?.id}</td>
-                    </tr>
-                    <tr>
-                      <th>Email:</th>
-                      <td>{user?.email}</td>
-                    </tr>
-                    <tr>
-                      <th>Name:</th>
-                      <td>{user?.name}</td>
-                    </tr>
-                    <tr>
-                      <th>Role:</th>
-                      <td>
-                        <span className="badge badge-info badge-pill px-3 py-2">
-                          {user?.role}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </>
+      )}
+    </Layout>
   );
 };

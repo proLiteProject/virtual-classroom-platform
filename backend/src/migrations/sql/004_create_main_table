@@ -1,0 +1,2 @@
+  ALTER TABLE live_classes ADD COLUMN subject_id INT;
+  ALTER TABLE live_classes ADD FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE;
